@@ -56,7 +56,7 @@ def play():
             if response2.status_code == 200:
                 json_data2 = response2.json()
                 url=json_data2["data"]["durl"][0]["url"]
-                return url
+                return redirect(url)
             else:
                 print(f"Failed to fetch data. Status code: {response2.status_code}. Retrying...")
                 retry_count += 1
