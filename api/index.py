@@ -36,7 +36,7 @@ def play():
                     p = complete_url[p_start:p_end]
                 p = p_param.strip()  # 去除可能出现的空格
                 break 
-                
+    print(bv+p)            
     url = 'https://api.bilibili.com/x/web-interface/view/detail'
     params = {'bvid': bv}
     max_retries = 10
