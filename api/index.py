@@ -58,14 +58,16 @@ def play():
                 if response2.status_code == 200:
                     json_data2 = response2.json()
                     video_url = json_data2["data"]["durl"][0]["url"]
-                    res = requests.head(video_url, allow_redirects=True)
-                    print(str(qn)+" " +str(res.status_code))
-                    if res.status_code != 403:
-                        # 如果状态码不是403，返回视频URL
-                        return redirect(video_url)
-                    else:
-                        if qn==0:
+                    with requests.get(video_url, stream=True) as res:
+                        # 检查前几个字节
+                        start = response.raw.read(10)
+                        print(str(qn)+" " +str(res.status_code))
+                        if res.status_code != 403:
+                            # 如果状态码不是403，返回视频URL
                             return redirect(video_url)
+                        else:
+                            if qn==0:
+                                return redirect(video_url)
             else:
                 print(f"Failed to fetch data. Status code: {response2.status_code}. Retrying...")
                 retry_count += 1
