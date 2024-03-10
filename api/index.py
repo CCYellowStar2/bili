@@ -51,21 +51,27 @@ def play():
                 json_data = response.json()
                 cid = json_data["data"]["View"]["pages"][int(p)-1]["cid"]
                 print(cid)
-            qn_values = [80, 64, 32, 16, 0]        
-            for qn in qn_values:
-                url2 = f"https://api.bilibili.com/x/player/playurl?cid={cid}&bvid={bv}&platform=html5&high_quality=1&qn={qn}"
-                response2 = requests.get(url2, headers=headers)
-                if response2.status_code == 200:
-                    json_data2 = response2.json()
-                    video_url = json_data2["data"]["durl"][0]["url"]
-                    with requests.get(video_url, stream=True) as res:
-                        print(str(qn)+" " +str(res.status_code)+" " +str(json_data2["data"]["durl"][0]["size"]))
-                        if res.status_code != 403:
-                            # 如果状态码不是403，返回视频URL
-                            return redirect(video_url)
-                        else:
-                            if qn==0:
-                                return redirect(video_url)
+            url2 = f"https://api.bilibili.com/x/player/playurl?cid={cid}&bvid={bv}&platform=html5&high_quality=1&qn=80"
+            response2 = requests.get(url2, headers=headers)
+            if response2.status_code == 200:
+                json_data2 = response2.json()
+                video_url = json_data2["data"]["durl"][0]["url"]
+                return redirect(video_url)
+#           qn_values = [80, 64, 32, 16, 0]        
+#            for qn in qn_values:
+#               url2 = f"https://api.bilibili.com/x/player/playurl?cid={cid}&bvid={bv}&platform=html5&high_quality=1&qn={qn}"
+#                response2 = requests.get(url2, headers=headers)
+#                if response2.status_code == 200:
+#                    json_data2 = response2.json()
+#                    video_url = json_data2["data"]["durl"][0]["url"]
+#                    with requests.get(video_url, stream=True) as res:
+#                        print(str(qn)+" " +str(res.status_code)+" " +str(json_data2["data"]["durl"][0]["size"]))
+#                        if res.status_code != 403:
+#                            # 如果状态码不是403，返回视频URL
+#                            return redirect(video_url)
+#                        else:
+#                            if qn==0:
+#                                return redirect(video_url)
             else:
                 print(f"Failed to fetch data. Status code: {response2.status_code}. Retrying...")
                 retry_count += 1
