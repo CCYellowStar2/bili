@@ -13,6 +13,63 @@ headers = {
     
 app = Flask(__name__)
 
+@app.route('/play')
+def play():
+    complete_url = request.args.get('url')
+
+    if complete_url:
+        # 分割字符串并获取BV号，它通常位于"/video/"之后
+        parts = complete_url.split('/video/')
+        bv_part = parts[1] if len(parts) > 1 else None
+        bv = bv_part.split('?')[0] if bv_part else None
+        
+        # 获取p参数，查找'?p='或'&p='后面的值，如果不存在则默认为'1'
+        p = '1'  # 默认值为'1'
+        for delimiter in ['?p=', '&p=']:
+            delimiter_index = complete_url.find(delimiter)
+            if delimiter_index != -1:
+                p_start = delimiter_index + len(delimiter)
+                p_end = complete_url.find('&', p_start)
+                if p_end == -1:  # 如果没找到其他参数，获取p到末尾的部分
+                    p = complete_url[p_start:]
+                else:
+                    p = complete_url[p_start:p_end]
+                p = p_param.strip()  # 去除可能出现的空格
+                break 
+                
+    url = 'https://api.bilibili.com/x/web-interface/view/detail'
+    params = {'bvid': bv}
+    max_retries = 10
+    retry_count = 0
+    cid=""
+    while retry_count < max_retries:
+        if not cid:
+            response = requests.get(url, params=params, headers=headers)
+        
+        if cid or response.status_code == 200:
+            if not cid:
+                json_data = response.json()
+                cid = json_data["data"]["View"]["pages"][int(p)-1]["cid"]
+                print(cid)
+            url2= f"https://api.bilibili.com/x/player/playurl?cid={cid}&bvid={bv}&platform=html5&high_quality=1"
+            response2 = requests.get(url2, headers=headers)
+            if response2.status_code == 200:
+                json_data2 = response2.json()
+                url=json_data2["data"]["durl"][0]["url"]
+                return url
+            else:
+                print(f"Failed to fetch data. Status code: {response2.status_code}. Retrying...")
+                retry_count += 1
+                time.sleep(1)  
+            break
+        else:
+            print(f"Failed to fetch data. Status code: {response.status_code}. Retrying...")
+            retry_count += 1
+            time.sleep(1)  
+    if retry_count == max_retries:
+        return f"Failed to fetch data. Status code: {response.status_code}"
+                
+
 @app.route('/')
 def home():
     bv = request.args.get('bv')
