@@ -51,9 +51,8 @@ def play():
                 json_data = response.json()
                 cid = json_data["data"]["View"]["pages"][int(p)-1]["cid"]
                 print(cid)
-            isok=False
             qn=80
-            while !isok:
+            while qn>=0:
                 url2= f"https://api.bilibili.com/x/player/playurl?cid={cid}&bvid={bv}&platform=html5&high_quality=1&qn={qn}"
                 response2 = requests.get(url2, headers=headers)
                 if response2.status_code == 200:
@@ -67,8 +66,11 @@ def play():
                             qn=32
                         elif qn=32:
                             qn=16
+                        elif qn=16:
+                            qn=0
+                        elif qn=0:
+                            return redirect(url) 
                     else:
-                        isok=true
                         return redirect(url)
             else:
                 print(f"Failed to fetch data. Status code: {response2.status_code}. Retrying...")
