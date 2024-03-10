@@ -59,9 +59,7 @@ def play():
                     json_data2 = response2.json()
                     video_url = json_data2["data"]["durl"][0]["url"]
                     with requests.get(video_url, stream=True) as res:
-                        # 检查前几个字节
-                        start = response.raw.read(10)
-                        print(str(qn)+" " +str(res.status_code))
+                        print(str(qn)+" " +str(res.status_code)+" " +str(json_data2["data"]["durl"][0]["size"]))
                         if res.status_code != 403:
                             # 如果状态码不是403，返回视频URL
                             return redirect(video_url)
