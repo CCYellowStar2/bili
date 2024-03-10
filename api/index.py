@@ -51,27 +51,21 @@ def play():
                 json_data = response.json()
                 cid = json_data["data"]["View"]["pages"][int(p)-1]["cid"]
                 print(cid)
-            qn=80
-            while qn>=0:
-                url2= f"https://api.bilibili.com/x/player/playurl?cid={cid}&bvid={bv}&platform=html5&high_quality=1&qn={qn}"
+            qn_values = [80, 64, 32, 16, 0]        
+            for qn in qn_values:
+                url2 = f"https://api.bilibili.com/x/player/playurl?cid={cid}&bvid={bv}&platform=html5&high_quality=1&qn={qn}"
                 response2 = requests.get(url2, headers=headers)
                 if response2.status_code == 200:
                     json_data2 = response2.json()
-                    url=json_data2["data"]["durl"][0]["url"]
-                    res = requests.head(url, allow_redirects=True)
-                    if response.status_code == 403:
-                        if qn=80:
-                            qn=64
-                        elif qn=64:
-                            qn=32
-                        elif qn=32:
-                            qn=16
-                        elif qn=16:
-                            qn=0
-                        elif qn=0:
-                            return redirect(url) 
+                    video_url = json_data2["data"]["durl"][0]["url"]
+                    res = requests.head(video_url, allow_redirects=True)
+                    
+                    if res.status_code != 403:
+                        # 如果状态码不是403，返回视频URL
+                        return redirect(video_url)
                     else:
-                        return redirect(url)
+                        if qn==0:
+                            return redirect(video_url)
             else:
                 print(f"Failed to fetch data. Status code: {response2.status_code}. Retrying...")
                 retry_count += 1
