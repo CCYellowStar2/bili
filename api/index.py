@@ -22,7 +22,7 @@ def play():
         parts = complete_url.split('/video/')
         bv_part = parts[1] if len(parts) > 1 else None
         bv = bv_part.split('?')[0] if bv_part else None
-        
+        bv = bv.rstrip('/') if bv_id else None
         # 获取p参数，查找'?p='或'&p='后面的值，如果不存在则默认为'1'
         p = '1'  # 默认值为'1'
         for delimiter in ['?p=', '&p=']:
