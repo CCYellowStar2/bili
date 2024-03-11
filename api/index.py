@@ -60,7 +60,7 @@ def play():
                     video_url = json_data2["data"]["durl"][0]["url"]
                     try:
                         with requests.get(video_url, stream=True, timeout=1) as response:
-                            print(str(qn)+" " +str(res.status_code)+" " +str(json_data2["data"]["durl"][0]["size"]))
+                            print(str(qn)+" " +str(response.status_code)+" " +str(json_data2["data"]["durl"][0]["size"]))
                             start = response.raw.read(10)  # 尝试读取10字节的内容
                             return redirect(video_url)
                     except requests.exceptions.Timeout:
