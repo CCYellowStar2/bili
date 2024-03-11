@@ -51,22 +51,21 @@ def play():
                 json_data = response.json()
                 cid = json_data["data"]["View"]["pages"][int(p)-1]["cid"]
                 print(cid)
-            qn=80
-            url2 = f"https://api.bilibili.com/x/player/playurl?cid={cid}&bvid={bv}&platform=html5&high_quality=1&qn={qn}"
-            response2 = requests.get(url2, headers=headers)
-            if response2.status_code == 200:
-                json_data2 = response2.json()
-                video_url = json_data2["data"]["durl"][0]["url"]
-                try:
-                    with requests.get(video_url, stream=True, timeout=1) as response:
-                        print(str(qn)+" " +str(res.status_code)+" " +str(json_data2["data"]["durl"][0]["size"]))
-                        start = response.raw.read(10)  # 尝试读取10字节的内容
-                        return redirect(video_url)
-                except requests.exceptions.Timeout:
-                    if qn!=0:
-                        qn=0
-                    else:
-                        return redirect(video_url)
+            qn_values = [80, 0]        
+            for qn in qn_values:
+                url2 = f"https://api.bilibili.com/x/player/playurl?cid={cid}&bvid={bv}&platform=html5&high_quality=1&qn={qn}"
+                response2 = requests.get(url2, headers=headers)
+                if response2.status_code == 200:
+                    json_data2 = response2.json()
+                    video_url = json_data2["data"]["durl"][0]["url"]
+                    try:
+                        with requests.get(video_url, stream=True, timeout=1) as response:
+                            print(str(qn)+" " +str(res.status_code)+" " +str(json_data2["data"]["durl"][0]["size"]))
+                            start = response.raw.read(10)  # 尝试读取10字节的内容
+                            return redirect(video_url)
+                    except requests.exceptions.Timeout:
+                        if qn==0:
+                            return redirect(video_url)
 #           qn_values = [80, 64, 32, 16, 0]        
 #            for qn in qn_values:
 #               url2 = f"https://api.bilibili.com/x/player/playurl?cid={cid}&bvid={bv}&platform=html5&high_quality=1&qn={qn}"
