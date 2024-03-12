@@ -58,12 +58,15 @@ def play():
                 if response2.status_code == 200:
                     json_data2 = response2.json()
                     video_url = json_data2["data"]["durl"][0]["url"]
+                    if qn==0:
+                        print(str(qn)+" " +str(json_data2["data"]["durl"][0]["size"]))
+                        return redirect(video_url)
                     try:
-                        with requests.get(video_url, stream=True, timeout=1) as res:
+                        with requests.get(video_url, stream=True, timeout=3) as res:
                             print(str(qn)+" " +str(res.status_code)+" " +str(json_data2["data"]["durl"][0]["size"]))
                             start = res.raw.read(10)  # 尝试读取10字节的内容
                             return redirect(video_url)
-                    except requests.exceptions.Timeout:
+                    except:
                         if qn==0:
                             return redirect(video_url)
 #           qn_values = [80, 64, 32, 16, 0]        
