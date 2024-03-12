@@ -65,6 +65,10 @@ def play():
                         with requests.get(video_url, stream=True, timeout=3) as res:
                             print(str(qn)+" " +str(res.status_code)+" " +str(json_data2["data"]["durl"][0]["size"]))
                             start = res.raw.read(10)  # 尝试读取10字节的内容
+                            content_type = res.headers.get('Content-Type', '')
+                            if 'text/html' in content_type:
+                                print("g")
+                                continue
                             return redirect(video_url)
                     except:
                         if qn==0:
